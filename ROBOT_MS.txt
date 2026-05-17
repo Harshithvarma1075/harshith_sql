@@ -1,0 +1,326 @@
+mysql> CREATE DATABASE IF NOT EXISTS robotics_lab_db;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql> USE robotics_lab_db;
+Database changed
+mysql> CREATE TABLE Robots (
+    ->     robot_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     robot_name VARCHAR(100),
+    ->     robot_type VARCHAR(50),
+    ->     battery_level INT,
+    ->     status VARCHAR(30)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TABLE Engineers (
+    ->     engineer_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     engineer_name VARCHAR(100),
+    ->     specialization VARCHAR(50),
+    ->     experience_years INT,
+    ->     city VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Experiments (
+    ->     experiment_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     experiment_name VARCHAR(100),
+    ->     robot_id INT,
+    ->     engineer_id INT,
+    ->     success_rate DECIMAL(5,2),
+    -> 
+    ->     FOREIGN KEY (robot_id) REFERENCES Robots(robot_id),
+    ->     FOREIGN KEY (engineer_id) REFERENCES Engineers(engineer_id)
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Robots
+    -> (robot_name, robot_type, battery_level, status)
+    -> VALUES
+    -> ('RoboX', 'Humanoid', 80, 'Active'),
+    -> ('MechaBot', 'Industrial', 60, 'Inactive'),
+    -> ('DroneEye', 'Drone', 90, 'Active'),
+    -> ('NanoBot', 'Medical', 40, 'Maintenance'),
+    -> ('AutoArm', 'Assembly', 75, 'Active');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Engineers
+    -> (engineer_name, specialization, experience_years, city)
+    -> VALUES
+    -> ('Arjun', 'AI Robotics', 5, 'Hyderabad'),
+    -> ('Sneha', 'Automation', 3, 'Bangalore'),
+    -> ('Rahul', 'Drone Systems', 6, 'Mumbai'),
+    -> ('Priya', 'Medical Robotics', 2, 'Chennai'),
+    -> ('Kiran', 'Industrial Robotics', 7, 'Pune');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Experiments
+    -> (experiment_name, robot_id, engineer_id, success_rate)
+    -> VALUES
+    -> ('Navigation Test', 1, 1, 92.5),
+    -> ('Factory Automation', 2, 2, 85.0),
+    -> ('Aerial Mapping', 3, 3, 95.5),
+    -> ('Surgery Assistance', 4, 4, 88.0),
+    -> ('Assembly Testing', 5, 5, 91.0);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> -- EASY QUERIES
+mysql> 
+mysql> -- 1.Returns robots having battery level greater than 70 using WHERE clause.
+mysql> -- FIRST CHECK THE TABLES
+mysql> SELECT * FROM ENGINEERS;
++-------------+---------------+---------------------+------------------+-----------+
+| engineer_id | engineer_name | specialization      | experience_years | city      |
++-------------+---------------+---------------------+------------------+-----------+
+|           1 | Arjun         | AI Robotics         |                5 | Hyderabad |
+|           2 | Sneha         | Automation          |                3 | Bangalore |
+|           3 | Rahul         | Drone Systems       |                6 | Mumbai    |
+|           4 | Priya         | Medical Robotics    |                2 | Chennai   |
+|           5 | Kiran         | Industrial Robotics |                7 | Pune      |
++-------------+---------------+---------------------+------------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM EXPERIMENTS;
++---------------+--------------------+----------+-------------+--------------+
+| experiment_id | experiment_name    | robot_id | engineer_id | success_rate |
++---------------+--------------------+----------+-------------+--------------+
+|             1 | Navigation Test    |        1 |           1 |        92.50 |
+|             2 | Factory Automation |        2 |           2 |        85.00 |
+|             3 | Aerial Mapping     |        3 |           3 |        95.50 |
+|             4 | Surgery Assistance |        4 |           4 |        88.00 |
+|             5 | Assembly Testing   |        5 |           5 |        91.00 |
++---------------+--------------------+----------+-------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM ROBOTS;
++----------+------------+------------+---------------+-------------+
+| robot_id | robot_name | robot_type | battery_level | status      |
++----------+------------+------------+---------------+-------------+
+|        1 | RoboX      | Humanoid   |            80 | Active      |
+|        2 | MechaBot   | Industrial |            60 | Inactive    |
+|        3 | DroneEye   | Drone      |            90 | Active      |
+|        4 | NanoBot    | Medical    |            40 | Maintenance |
+|        5 | AutoArm    | Assembly   |            75 | Active      |
++----------+------------+------------+---------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> -- EASY QUERIES
+mysql> 
+mysql> -- 1.Returns robots having battery level greater than 70 using WHERE clause.
+mysql> SELECT robot_name, battery_level
+    -> FROM Robots
+    -> WHERE battery_level > 70;
++------------+---------------+
+| robot_name | battery_level |
++------------+---------------+
+| RoboX      |            80 |
+| DroneEye   |            90 |
+| AutoArm    |            75 |
++------------+---------------+
+3 rows in set (0.01 sec)
+
+mysql> -- 2.Returns engineers from Hyderabad using WHERE clause.
+mysql> SELECT engineer_name, city
+    -> FROM Engineers
+    -> WHERE city = 'Hyderabad';
++---------------+-----------+
+| engineer_name | city      |
++---------------+-----------+
+| Arjun         | Hyderabad |
++---------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> -- 3.Returns robots whose status is Active using WHERE clause.
+mysql> SELECT robot_name, status
+    -> FROM Robots
+    -> WHERE status = 'Active';
++------------+--------+
+| robot_name | status |
++------------+--------+
+| RoboX      | Active |
+| DroneEye   | Active |
+| AutoArm    | Active |
++------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> -- 4.Returns engineers having experience between 3 and 6 years using BETWEEN operator.
+mysql> SELECT engineer_name, experience_years
+    -> FROM Engineers
+    -> WHERE experience_years BETWEEN 3 AND 6;
++---------------+------------------+
+| engineer_name | experience_years |
++---------------+------------------+
+| Arjun         |                5 |
+| Sneha         |                3 |
+| Rahul         |                6 |
++---------------+------------------+
+3 rows in set (0.01 sec)
+
+mysql> -- MEDIUM LEVEL QUERIES
+mysql> 
+mysql> -- 1.Returns average battery level of robots using AVG aggregate function.
+mysql> SELECT AVG(battery_level) AS average_battery
+    -> FROM Robots;
++-----------------+
+| average_battery |
++-----------------+
+|         69.0000 |
++-----------------+
+1 row in set (0.01 sec)
+
+mysql> -- 2.Returns total robots based on status using COUNT and GROUP BY clauses.
+mysql> SELECT status, COUNT(robot_id) AS total_robots
+    -> FROM Robots
+    -> GROUP BY status;
++-------------+--------------+
+| status      | total_robots |
++-------------+--------------+
+| Active      |            3 |
+| Inactive    |            1 |
+| Maintenance |            1 |
++-------------+--------------+
+3 rows in set (0.01 sec)
+
+mysql> -- 3.Returns highest experiment success rate using MAX aggregate function.
+mysql> SELECT MAX(success_rate) AS highest_success_rate
+    -> FROM Experiments;
++----------------------+
+| highest_success_rate |
++----------------------+
+|                95.50 |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> -- 4.Returns total engineers from each city using COUNT and GROUP BY clauses.
+mysql> SELECT city, COUNT(engineer_id) AS total_engineers
+    -> FROM Engineers
+    -> GROUP BY city;
++-----------+-----------------+
+| city      | total_engineers |
++-----------+-----------------+
+| Hyderabad |               1 |
+| Bangalore |               1 |
+| Mumbai    |               1 |
+| Chennai   |               1 |
+| Pune      |               1 |
++-----------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> -- HARD LEVEL QUERIES
+mysql> 
+mysql> -- 1.Returns robot names along with experiment names and success rates using JOIN clause.
+mysql> SELECT 
+    -> r.robot_name,
+    -> e.experiment_name,
+    -> e.success_rate
+    -> FROM Robots r
+    -> JOIN Experiments e
+    -> ON r.robot_id = e.robot_id;
++------------+--------------------+--------------+
+| robot_name | experiment_name    | success_rate |
++------------+--------------------+--------------+
+| RoboX      | Navigation Test    |        92.50 |
+| MechaBot   | Factory Automation |        85.00 |
+| DroneEye   | Aerial Mapping     |        95.50 |
+| NanoBot    | Surgery Assistance |        88.00 |
+| AutoArm    | Assembly Testing   |        91.00 |
++------------+--------------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 2.Returns engineers and the experiments handled by them using JOIN clause.
+mysql> SELECT 
+    -> en.engineer_name,
+    -> ex.experiment_name
+    -> FROM Engineers en
+    -> JOIN Experiments ex
+    -> ON en.engineer_id = ex.engineer_id;
++---------------+--------------------+
+| engineer_name | experiment_name    |
++---------------+--------------------+
+| Arjun         | Navigation Test    |
+| Sneha         | Factory Automation |
+| Rahul         | Aerial Mapping     |
+| Priya         | Surgery Assistance |
+| Kiran         | Assembly Testing   |
++---------------+--------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- 3.Returns robots with experiment success rate greater than 90 using JOIN and WHERE clauses.
+mysql> SELECT 
+    -> r.robot_name,
+    -> ex.success_rate
+    -> FROM Robots r
+    -> JOIN Experiments ex
+    -> ON r.robot_id = ex.robot_id
+    -> WHERE ex.success_rate > 90;
++------------+--------------+
+| robot_name | success_rate |
++------------+--------------+
+| RoboX      |        92.50 |
+| DroneEye   |        95.50 |
+| AutoArm    |        91.00 |
++------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> -- 4.Returns total experiments handled by each engineer using JOIN, COUNT, and GROUP BY clauses.
+mysql> SELECT 
+    -> en.engineer_name,
+    -> COUNT(ex.experiment_id) AS total_experiments
+    -> FROM Engineers en
+    -> JOIN Experiments ex
+    -> ON en.engineer_id = ex.engineer_id
+    -> GROUP BY en.engineer_name;
++---------------+-------------------+
+| engineer_name | total_experiments |
++---------------+-------------------+
+| Arjun         |                 1 |
+| Sneha         |                 1 |
+| Rahul         |                 1 |
+| Priya         |                 1 |
+| Kiran         |                 1 |
++---------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- :::::::::::::::::::::::::::::::::::::::::::::DESCRIPTION OF QUERIES::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+mysql> 
+mysql> -- EASY QUERY 1:
+mysql> -- This query displays the names and battery levels of robots whose battery level is greater than 70 using the WHERE clause with a comparison operator.
+mysql> 
+mysql> -- EASY QUERY 2:
+mysql> -- This query displays the names and cities of engineers who belong to Hyderabad using the WHERE clause for filtering records.
+mysql> 
+mysql> -- EASY QUERY 3:
+mysql> -- This query returns the names and statuses of robots that are currently active using the WHERE clause.
+mysql> 
+mysql> -- EASY QUERY 4:
+mysql> -- This query displays engineers whose experience is between 3 and 6 years using the BETWEEN operator in the WHERE clause.
+mysql> 
+mysql> -- INTERMEDIATE QUERY 1:
+mysql> -- This query calculates the average battery level of all robots using the AVG aggregate function.
+mysql> 
+mysql> -- INTERMEDIATE QUERY 2:
+mysql> -- This query counts the total number of robots based on their status using the COUNT aggregate function along with the GROUP BY clause.
+mysql> 
+mysql> -- INTERMEDIATE QUERY 3:
+mysql> -- This query finds the highest success rate achieved among all experiments using the MAX aggregate function.
+mysql> 
+mysql> -- INTERMEDIATE QUERY 4:
+mysql> -- This query displays the total number of engineers available in each city using COUNT and GROUP BY clauses.
+mysql> 
+mysql> -- HARD QUERY 1:
+mysql> -- This query joins the Robots and Experiments tables to display robot names along with their experiment names and success rates using the JOIN clause.
+mysql> 
+mysql> -- HARD QUERY 2:
+mysql> -- This query joins the Engineers and Experiments tables to display engineer names along with the experiments handled by them using the JOIN clause.
+mysql> 
+mysql> -- HARD QUERY 3:
+mysql> -- This query joins the Robots and Experiments tables and displays robots whose experiment success rate is greater than 90 using JOIN and WHERE clauses.
+mysql> 
+mysql> -- HARD QUERY 4:
+mysql> -- This query joins the Engineers and Experiments tables and counts the total number of experiments handled by each engineer using JOIN, COUNT, and GROUP BY clauses.
+mysql> 
+mysql> 
+mysql> EXIT
